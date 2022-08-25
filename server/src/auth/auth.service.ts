@@ -3,8 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { AuthDTO } from './DTO/auth.dto';
+import { RegisterDTO } from './DTO/register.dto';
 import * as bcrypt from 'bcryptjs';
+import { LoginDTO } from './DTO/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -14,9 +15,9 @@ export class AuthService {
 		private jwtService: JwtService
 	) {}
 
-	async register(authDTO :AuthDTO): Promise<User> {
-		const { username, nickname, email, password } = authDTO;
-		const salt = await bcrypt.getSalt();
+	async register(registerDTO :RegisterDTO): Promise<User> {
+		const { username, nickname, email, password } = registerDTO;
+		const salt = await bcrypt.genSalt();
 		const hashedPassword = await bcrypt.hash(password, salt);
 		const user = this.userRepository.create({
 			username,
@@ -27,7 +28,7 @@ export class AuthService {
 		try {
 			await this.userRepository.save(user);
 		} catch(err) {
-			if (err.code === '23505') {
+			if (err.code === 'ER_DUP_ENTRY') {
 				throw new ConflictException('Existing username or nickname or email');
 			} else {
 				throw new InternalServerErrorException();
@@ -36,8 +37,8 @@ export class AuthService {
 		return user;
 	}
 
-	async login(authDTO: AuthDTO): Promise<{ token: string }> {
-		const { username, password } = authDTO;
+	async login(loginDTO: LoginDTO): Promise<{ token: string }> {
+		const {username, password } = loginDTO;
 		const user: User = await this.userRepository.findOne({
 			where: {
 				username: username

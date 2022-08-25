@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,9 +8,11 @@ import { typeORMconfig } from './config/typeORM.config';
 
 @Module({
   imports: [
-    AuthModule,
-    ConfigModule.forRoot(),
     TypeOrmModule.forRoot(typeORMconfig),
+    AuthModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
   controllers: [AppController],
   providers: [
