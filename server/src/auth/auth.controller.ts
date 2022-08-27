@@ -1,8 +1,8 @@
 import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LoginDTO } from './DTO/login.dto';
-import { RegisterDTO } from './DTO/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 import { User } from './user.entity';
 
 @Controller('auth')
@@ -19,7 +19,7 @@ export class AuthController {
 		description: '사용자가 폼을 입력하면 회원정보가 db에 저장된다.',
 		type: User
 	})
-	async register(@Body(ValidationPipe) registerDTO: RegisterDTO): Promise<User> {
+	async register(@Body(ValidationPipe) registerDTO: RegisterDto): Promise<User> {
 		return await this.authService.register(registerDTO);
 	}
 
@@ -32,7 +32,7 @@ export class AuthController {
 		description: '사용자가 폼을 입력하여 로그인 요청을 받는다.',
 		type: User
 	})
-	async login(@Body(ValidationPipe) loginDTO: LoginDTO): Promise<{ token: string }> {
+	async login(@Body(ValidationPipe) loginDTO: LoginDto): Promise<{ token: string }> {
 		return await this.authService.login(loginDTO);
 	}
 }
