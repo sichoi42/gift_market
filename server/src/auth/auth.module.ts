@@ -6,6 +6,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { User } from './user.entity';
 import * as config from 'config';
+import { JwtStrategy } from './jwt.strategy';
 
 const jwtConfig = config.get('jwt');
 
@@ -21,6 +22,7 @@ const jwtConfig = config.get('jwt');
 		TypeOrmModule.forFeature([User])
 	],
 	controllers: [AuthController],
-	providers: [AuthService]
+	providers: [AuthService, JwtStrategy],
+	exports: [JwtStrategy, PassportModule]
 })
 export class AuthModule {}
