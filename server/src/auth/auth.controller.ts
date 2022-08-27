@@ -16,7 +16,7 @@ export class AuthController {
 		description: '사용자가 폼을 입력하면 회원정보가 db에 저장된다.'
 	})
 	@ApiCreatedResponse({
-		description: '사용자가 폼을 입력하면 회원정보가 db에 저장된다.',
+		description: 'User Entity를 반환한다.',
 		type: User
 	})
 	async register(@Body(ValidationPipe) registerDTO: RegisterDto): Promise<User> {
@@ -29,7 +29,7 @@ export class AuthController {
 		description: '사용자가 폼을 입력하여 로그인 요청을 받는다.'
 	})
 	@ApiCreatedResponse({
-		description: '사용자가 폼을 입력하여 로그인 요청을 받는다.',
+		description: 'User Entity를 반환한다.',
 		type: User
 	})
 	async login(@Body(ValidationPipe) loginDTO: LoginDto): Promise<{ token: string }> {
