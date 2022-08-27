@@ -4,6 +4,6 @@ export class CreateItemTypeDto {
 	@IsString()
 	type_name: string;
 
-	@IsString()
-	type_img_url: string;
+	// @IsString()
+	// type_img_url: string;
 }

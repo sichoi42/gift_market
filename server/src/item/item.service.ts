@@ -8,7 +8,7 @@ import { UpLoadItemDto } from './dto/upload_item.dto';
 import { Item } from './entity/item.entity';
 import { Brand } from './entity/item_brand.entity';
 import { Type } from './entity/item_type.entity';
-import { createImageUrl } from './utils/multer_options';
+import { getBrandImageUrl, getImageUrl, getTypeImageUrl } from './utils/multer_options';
 
 @Injectable()
 export class ItemService {
@@ -52,24 +52,31 @@ export class ItemService {
 			is_saled: false,
 			buyer_id: undefined,
 			seller_id: user.id,
-			img_url: createImageUrl(file),
+			img_url: getImageUrl(file),
 		});
 		await this.itemRepository.save(item);
 		return item;
 	}
 
-	async create_item_type(createItemTypeDto: CreateItemTypeDto): Promise<Type> {
-		const { type_name, type_img_url } = createItemTypeDto;
+	async create_item_type(
+		createItemTypeDto: CreateItemTypeDto,
+		file: Express.Multer.File
+		): Promise<Type> {
+		const { type_name } = createItemTypeDto;
+		file.filename = type_name;
 		const type = await this.typeRepository.create({
 			type_name,
-			type_img_url,
+			type_img_url: getTypeImageUrl(file),
 		});
 		await this.typeRepository.save(type);
 		return type;
 	}
 
-	async create_item_brand(createItemBrandDto: CreateItemBrandDto): Promise<Brand> {
-		const { brand_name, type_name, brand_img_url } = createItemBrandDto;
+	async create_item_brand(
+		createItemBrandDto: CreateItemBrandDto,
+		file: Express.Multer.File
+		): Promise<Brand> {
+		const { brand_name, type_name } = createItemBrandDto;
 		const found = await this.typeRepository.findOne({
 			where: {
 				type_name: type_name
@@ -80,11 +87,12 @@ export class ItemService {
 		}
 
 		const type_id = found.id;
+		file.filename = brand_name;
 		const brand = await this.brandRepository.create({
 			brand_name,
 			type_id,
 			type_name,
-			brand_img_url,
+			brand_img_url:getBrandImageUrl(file),
 		});
 		await this.brandRepository.save(brand);
 		return brand;

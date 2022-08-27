@@ -7,6 +7,6 @@ export class CreateItemBrandDto {
 	@IsString()
 	type_name: string;
 
-	@IsString()
-	brand_img_url: string;
+	// @IsString()
+	// brand_img_url: string;
 }

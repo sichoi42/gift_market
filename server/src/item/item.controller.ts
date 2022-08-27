@@ -10,7 +10,7 @@ import { Item } from './entity/item.entity';
 import { Brand } from './entity/item_brand.entity';
 import { Type } from './entity/item_type.entity';
 import { ItemService } from './item.service';
-import { multerOptions } from './utils/multer_options';
+import { multerOptions, multerOptionsBrand, multerOptionsType } from './utils/multer_options';
 
 @Controller('item')
 @UseGuards(AuthGuard('jwt'))
@@ -18,7 +18,7 @@ export class ItemController {
 	constructor(private itemService: ItemService) {}
 
 	@Post('/post_my_item')
-	@UseInterceptors(FileInterceptor('img', multerOptions))
+	@UseInterceptors(FileInterceptor('item_img', multerOptions))
 	async post_my_item(
 		@Body(ValidationPipe) upLoadItemDto: UpLoadItemDto,
 		@UploadedFile() file: Express.Multer.File,
@@ -29,12 +29,20 @@ export class ItemController {
 		}
 
 	@Post('/create_item_type')
-	async create_item_type(@Body() createItemTypeDto: CreateItemTypeDto): Promise<Type> {
-		return await this.itemService.create_item_type(createItemTypeDto);
+	@UseInterceptors(FileInterceptor('type_img', multerOptionsType))
+	async create_item_type(
+		@Body(ValidationPipe) createItemTypeDto: CreateItemTypeDto,
+		@UploadedFile() file: Express.Multer.File,
+		): Promise<Type> {
+		return await this.itemService.create_item_type(createItemTypeDto, file);
 	}
 
 	@Post('/create_item_brand')
-	async create_item_brand(@Body() createItemBrandDto: CreateItemBrandDto): Promise<Brand> {
-		return await this.itemService.create_item_brand(createItemBrandDto);
+	@UseInterceptors(FileInterceptor('brand_img', multerOptionsBrand))
+	async create_item_brand(
+		@Body(ValidationPipe) createItemBrandDto: CreateItemBrandDto,
+		@UploadedFile() file: Express.Multer.File,
+		): Promise<Brand> {
+		return await this.itemService.create_item_brand(createItemBrandDto, file);
 	}
 }
