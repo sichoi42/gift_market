@@ -1,7 +1,7 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
-@Unique(['img_url'])
+@Unique(['img_url', 'pin_number'])
 export class Item extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
