@@ -2,7 +2,7 @@ import { HttpException, HttpStatus } from "@nestjs/common";
 import { existsSync, mkdirSync } from "fs";
 import { diskStorage } from "multer";
 import { extname } from "path";
-import uuidRandom from "./uuidRandom";
+import { uuidRandom } from "./format_filename";
 
 
 export const multerOptions = {
@@ -19,7 +19,7 @@ export const multerOptions = {
 	},
 	storage: diskStorage({
 		destination: (req, file, cb) => {
-			const upLoadPath: string = 'public';
+			const upLoadPath: string = 'public/gifticon/';
 			if (!existsSync(upLoadPath)) {
 				mkdirSync(upLoadPath);
 			}
@@ -45,12 +45,15 @@ export const multerOptionsType = {
 	},
 	storage: diskStorage({
 		destination: (req, file, cb) => {
-			const upLoadPath: string = `${__dirname}/../assets/categories/`;
+			const upLoadPath: string = `public/categories/`;
 			if (!existsSync(upLoadPath)) {
 				mkdirSync(upLoadPath);
 			}
 			cb(null, upLoadPath);
 		},
+		filename: (req, file, cb) => {
+			cb(null, uuidRandom(file));
+		}
 	})
 }
 
@@ -68,23 +71,26 @@ export const multerOptionsBrand = {
 	},
 	storage: diskStorage({
 		destination: (req, file, cb) => {
-			const upLoadPath: string = `${__dirname}/../assets/brands/`;
+			const upLoadPath: string = `public/brands/`;
 			if (!existsSync(upLoadPath)) {
 				mkdirSync(upLoadPath);
 			}
 			cb(null, upLoadPath);
 		},
+		filename: (req, file, cb) => {
+			cb(null, uuidRandom(file));
+		}
 	})
 }
 
 export const getImageUrl = (file): string => {
-	return `/public/${file.filename}`;
+	return `public/gifticon/${file.filename}`;
 }
 
 export const getTypeImageUrl = (file): string => {
-	return `${__dirname}/../assets/categories/${file.filename}`;
+	return `public/categories/${file.filename}`;
 }
 
 export const getBrandImageUrl = (file): string => {
-	return `${__dirname}/../assets/brands/${file.filename}`;
+	return `public/brands/${file.filename}`;
 }

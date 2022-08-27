@@ -12,7 +12,7 @@ export class AuthController {
 
 	@Post('/register')
 	@ApiOperation({
-		summary: '회원가입 API',
+		summary: '[사용자 API] 회원가입',
 		description: '사용자가 폼을 입력하면 회원정보가 db에 저장된다.'
 	})
 	@ApiCreatedResponse({
@@ -25,7 +25,7 @@ export class AuthController {
 
 	@Post('/login')
 	@ApiOperation({
-		summary: '로그인 API',
+		summary: '[사용자 API] 로그인 API',
 		description: '사용자가 폼을 입력하여 로그인 요청을 받는다.'
 	})
 	@ApiCreatedResponse({

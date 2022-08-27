@@ -9,6 +9,7 @@ import { Item } from './entity/item.entity';
 import { Brand } from './entity/item_brand.entity';
 import { Type } from './entity/item_type.entity';
 import { getBrandImageUrl, getImageUrl, getTypeImageUrl } from './utils/multer_options';
+import { extname } from "path";
 
 @Injectable()
 export class ItemService {
@@ -29,7 +30,6 @@ export class ItemService {
 		user: User
 		): Promise<Item> {
 		const { item_name, brand_name, price, expire_date, pin_number } = upLoadItemDto;
-
 		const found = await this.brandRepository.findOne({
 			where: {
 				brand_name: brand_name,
@@ -63,11 +63,11 @@ export class ItemService {
 		file: Express.Multer.File
 		): Promise<Type> {
 		const { type_name } = createItemTypeDto;
-		file.filename = type_name;
 		const type = await this.typeRepository.create({
 			type_name,
 			type_img_url: getTypeImageUrl(file),
 		});
+		await console.log(file);
 		await this.typeRepository.save(type);
 		return type;
 	}
@@ -87,7 +87,6 @@ export class ItemService {
 		}
 
 		const type_id = found.id;
-		file.filename = brand_name;
 		const brand = await this.brandRepository.create({
 			brand_name,
 			type_id,
