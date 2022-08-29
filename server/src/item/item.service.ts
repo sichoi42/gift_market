@@ -2,14 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/user.entity';
 import { Repository } from 'typeorm';
-import { CreateItemBrandDto } from './dto/create_item_brand.dto';
-import { CreateItemTypeDto } from './dto/create_item_type.dto';
+import { ItemBrandDto } from './dto/item_brand.dto';
+import { ItemTypeDto } from './dto/item_type.dto';
 import { UpLoadItemDto } from './dto/upload_item.dto';
 import { Item } from './entity/item.entity';
 import { Brand } from './entity/item_brand.entity';
 import { Type } from './entity/item_type.entity';
 import { getBrandImageUrl, getImageUrl, getTypeImageUrl } from './utils/multer_options';
 import { extname } from "path";
+import { GetItemDto } from './dto/get_item.dto';
 
 @Injectable()
 export class ItemService {
@@ -59,10 +60,10 @@ export class ItemService {
 	}
 
 	async create_item_type(
-		createItemTypeDto: CreateItemTypeDto,
+		itemTypeDto: ItemTypeDto,
 		file: Express.Multer.File
 		): Promise<Type> {
-		const { type_name } = createItemTypeDto;
+		const { type_name } = itemTypeDto;
 		const type = await this.typeRepository.create({
 			type_name,
 			type_img_url: getTypeImageUrl(file),
@@ -73,10 +74,10 @@ export class ItemService {
 	}
 
 	async create_item_brand(
-		createItemBrandDto: CreateItemBrandDto,
+		itemBrandDto: ItemBrandDto,
 		file: Express.Multer.File
 		): Promise<Brand> {
-		const { brand_name, type_name } = createItemBrandDto;
+		const { brand_name, type_name } = itemBrandDto;
 		const found = await this.typeRepository.findOne({
 			where: {
 				type_name: type_name
@@ -95,5 +96,23 @@ export class ItemService {
 		});
 		await this.brandRepository.save(brand);
 		return brand;
+	}
+
+	async get_item_type(): Promise<ItemTypeDto[]> {
+		return await this.typeRepository.find();
+	}
+
+	async get_item_brand(type_name: string): Promise<ItemBrandDto[]> {
+		const query = await this.brandRepository.createQueryBuilder('brand');
+		query.where('brand.type_name = :type_name', { type_name: type_name });
+		return await query.getMany();
+	}
+
+	async get_item(brand_name: string) : Promise<GetItemDto[]> {
+		const query = await this.itemRepository.createQueryBuilder('item');
+		query
+		.select(['item.item_name', 'item.price', 'item.expire_date'])
+		.where('item.brand_name = :brand_name', { brand_name: brand_name });
+		return await query.getMany();
 	}
 }

@@ -1,11 +1,12 @@
-import { Body, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { getUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/auth/user.entity';
-import { CreateItemBrandDto } from './dto/create_item_brand.dto';
-import { CreateItemTypeDto } from './dto/create_item_type.dto';
+import { GetItemDto } from './dto/get_item.dto';
+import { ItemBrandDto } from './dto/item_brand.dto';
+import { ItemTypeDto } from './dto/item_type.dto';
 import { UpLoadItemDto } from './dto/upload_item.dto';
 import { Item } from './entity/item.entity';
 import { Brand } from './entity/item_brand.entity';
@@ -96,10 +97,10 @@ export class ItemController {
 		type: Type
 	})
 	async create_item_type(
-		@Body(ValidationPipe) createItemTypeDto: CreateItemTypeDto,
+		@Body(ValidationPipe) itemTypeDto: ItemTypeDto,
 		@UploadedFile() file: Express.Multer.File,
 		): Promise<Type> {
-		return await this.itemService.create_item_type(createItemTypeDto, file);
+		return await this.itemService.create_item_type(itemTypeDto, file);
 	}
 
 	@Post('/create_item_brand')
@@ -128,9 +129,24 @@ export class ItemController {
 		type: Brand
 	})
 	async create_item_brand(
-		@Body(ValidationPipe) createItemBrandDto: CreateItemBrandDto,
+		@Body(ValidationPipe) itemBrandDto: ItemBrandDto,
 		@UploadedFile() file: Express.Multer.File,
 		): Promise<Brand> {
-		return await this.itemService.create_item_brand(createItemBrandDto, file);
+		return await this.itemService.create_item_brand(itemBrandDto, file);
+	}
+
+	@Get('/get_item_type')
+	async get_item_type(): Promise<ItemTypeDto[]> {
+		return await this.itemService.get_item_type();
+	}
+
+	@Get('/get_item_brand/:type_name')
+	async get_item_brand(@Param('type_name') type_name: string) : Promise<ItemBrandDto[]> {
+		return await this.itemService.get_item_brand(type_name);
+	}
+
+	@Get('/get_item/:brand_name')
+	async get_item(@Param('brand_name') brand_name: string) : Promise<GetItemDto[]> {
+		return await this.itemService.get_item(brand_name);
 	}
 }

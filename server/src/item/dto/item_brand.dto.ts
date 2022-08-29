@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString } from "class-validator";
 
-export class CreateItemBrandDto {
+export class ItemBrandDto {
 	@ApiProperty({
 		example: '스타벅스',
 		required: true,
